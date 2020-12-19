@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nekidaem_kanban/BLoC/auth_bloc.dart';
+import 'package:nekidaem_kanban/blocs/auth_bloc.dart';
 
-import 'package:nekidaem_kanban/BLoC/kanban_bloc.dart';
-import 'package:nekidaem_kanban/BLoC/login_bloc.dart';
+import 'package:nekidaem_kanban/blocs/kanban_bloc.dart';
+import 'package:nekidaem_kanban/blocs/login_bloc.dart';
 import 'package:provider/provider.dart';
 
 import 'Screens/auth_screen.dart';
