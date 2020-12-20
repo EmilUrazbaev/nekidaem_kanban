@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nekidaem_kanban/BLoC/auth_bloc.dart';
-import 'package:nekidaem_kanban/BLoC/login_bloc.dart';
+import 'package:nekidaem_kanban/Services/http_exception.dart';
+import 'package:nekidaem_kanban/blocs/auth_bloc.dart';
+import 'package:nekidaem_kanban/blocs/login_bloc.dart';
 import 'package:provider/provider.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -27,6 +28,24 @@ class _AuthScreenState extends State<AuthScreen> {
   void didChangeDependencies() {
     _authBloc = Provider.of<AuthBloc>(context);
     super.didChangeDependencies();
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(''),
+        content: Text(message),
+        actions: [
+          FlatButton(
+            child: Text('Ok!'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -76,6 +95,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                   .requestFocus(_tokenFocusNode);
                             },
                             onChanged: (String value) {
+                              _authData['username'] = value;
                               _loginBloc.updateEmail(value);
                             },
                           );
@@ -119,6 +139,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             },
                             focusNode: _tokenFocusNode,
                             onChanged: (String value) {
+                              _authData['password'] = value;
                               _loginBloc.updatePassword(value);
                             },
                           );
@@ -134,9 +155,13 @@ class _AuthScreenState extends State<AuthScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30)),
                   child: Text("Log in"),
-                  onPressed: () {
-                    _authBloc.login(
-                        _authData['username'], _authData['password']);
+                  onPressed: () async {
+                    try {
+                      await _authBloc.login(
+                          _authData['username'], _authData['password']);
+                    } on HttpException catch (error) {
+                      _showErrorDialog(error.toString());
+                    }
                   },
                 ),
               )

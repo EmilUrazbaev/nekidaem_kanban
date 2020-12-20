@@ -34,18 +34,20 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           brightness: Brightness.dark,
         ),
-        home: KanbanScreen(),
-        // Consumer<AuthBloc>(builder: (context, _authBloc, _) {
-        //   return StreamBuilder(
-        //       stream: _authBloc.isAuthenticated,
-        //       builder: (context, snapshot) {
-        //         if (snapshot.data) {
-        //           return KanbanScreen();
-        //         } else {
-        //           return AuthScreen();
-        //         }
-        //       });
-        // }),
+        home: Consumer<AuthBloc>(builder: (context, _authBloc, _) {
+          return StreamBuilder(
+              stream: _authBloc.isAuthenticated,
+              builder: (context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.data != null) {
+                  if (snapshot.data) {
+                    return KanbanScreen();
+                  } else {
+                    return AuthScreen();
+                  }
+                }
+                return AuthScreen();
+              });
+        }),
       ),
     );
   }

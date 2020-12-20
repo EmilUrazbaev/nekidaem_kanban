@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 
 import 'package:nekidaem_kanban/models/Tickets.dart';
 
+import 'http_exception.dart';
+
 //This class is a Singleton
 class ApiClient {
   static final ApiClient _apiClient = ApiClient._internal();
@@ -28,7 +30,7 @@ class ApiClient {
     return Ticket.fromJsonArray(utf8.decode(response.bodyBytes));
   }
 
-  Future<ApiResponse> logIn({String username, String password}) async {
+  Future<bool> logIn({String username, String password}) async {
     final url = 'https://trello.backend.tests.nekidaem.ru/api/v1/users/login/';
     final response = await http.post(url,
         headers: {
@@ -39,16 +41,14 @@ class ApiClient {
             <String, String>{'username': username, 'password': password}));
     if (response.statusCode == 200) {
       token = jsonDecode(response.body)['token'];
-      return ApiResponse(true, '');
+      return true;
     } else {
-      return ApiResponse(false, response.body);
+      throw HttpException(response.body);
     }
   }
-}
 
-class ApiResponse {
-  String error;
-  bool isAuthenticated;
-
-  ApiResponse(isAuthenticated, error);
+  void logout() {
+    isAuthenticated = false;
+    token = '';
+  }
 }

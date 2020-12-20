@@ -17,12 +17,6 @@ class LoginBloc with Validators {
         return true;
       });
 
-  submit() {
-    final validEmail = _emailController.value;
-    final validPassword = _passwordController.value;
-    print('Logging in with email: $validEmail and password: $validPassword');
-  }
-
   dispose() {
     _emailController.close();
     _passwordController.close();

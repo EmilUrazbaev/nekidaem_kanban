@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nekidaem_kanban/BLoC/kanban_bloc.dart';
+import 'package:nekidaem_kanban/blocs/auth_bloc.dart';
+import 'package:nekidaem_kanban/blocs/kanban_bloc.dart';
 import 'package:nekidaem_kanban/Screens/kanban_screen/tickets_listview.dart';
 import 'package:nekidaem_kanban/models/Tickets.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ class KanbanScreen extends StatefulWidget {
 class _KanbanScreenState extends State<KanbanScreen>
     with SingleTickerProviderStateMixin {
   KanbanBloc _kanbanBloc;
+  AuthBloc _authBloc;
   @override
   void initState() {
     super.initState();
@@ -20,6 +22,7 @@ class _KanbanScreenState extends State<KanbanScreen>
   @override
   void didChangeDependencies() {
     _kanbanBloc = Provider.of<KanbanBloc>(context);
+    _authBloc = Provider.of<AuthBloc>(context);
     _kanbanBloc.getTickets();
     super.didChangeDependencies();
   }
@@ -43,7 +46,9 @@ class _KanbanScreenState extends State<KanbanScreen>
           backgroundColor: Colors.grey[850],
           actions: [
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                _authBloc.logout();
+              },
               color: Colors.cyanAccent,
               textColor: Colors.white,
               child: Icon(
@@ -59,8 +64,8 @@ class _KanbanScreenState extends State<KanbanScreen>
           builder: (context, _kanbanBloc, _) {
             return StreamBuilder<List<Ticket>>(
               stream: _kanbanBloc.subject.stream,
+              initialData: [],
               builder: (context, snapshot) {
-                print(snapshot.data);
                 return TabBarView(
                   children: [
                     TicketsListview(

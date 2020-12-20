@@ -3,19 +3,21 @@ import 'package:nekidaem_kanban/Services/api_client.dart';
 
 class AuthBloc {
   final _apiClient = ApiClient();
-  final _authController = BehaviorSubject<ApiResponse>();
   final _isAuthenticated = BehaviorSubject<bool>.seeded(false);
 
   login(String user, String password) async {
-    ApiResponse response = await _apiClient.logIn();
-    _authController.sink.add(response);
-    _isAuthenticated.sink.add(response.isAuthenticated);
+    bool response = await _apiClient.logIn(username: user, password: password);
+    _isAuthenticated.sink.add(response);
   }
 
   Stream<bool> get isAuthenticated => _isAuthenticated.stream;
 
+  logout() {
+    _apiClient.logout();
+    _isAuthenticated.sink.add(false);
+  }
+
   dispose() {
-    _authController.close();
     _isAuthenticated.close();
   }
 }
